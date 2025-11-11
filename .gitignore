@@ -1,0 +1,16 @@
+# Dependências do Node
+node_modules/
+
+# Banco de dados SQLite
+src/config/database.sqlite
+database.sqlite
+
+# Arquivos de ambiente
+.env
+
+# Logs e temporários
+*.log
+.DS_Store
+
+# Arquivo de sincronização (se não quiser versionar)
+src/config/sync.js
