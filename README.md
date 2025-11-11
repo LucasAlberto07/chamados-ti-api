@@ -28,3 +28,5 @@ O objetivo é gerenciar **chamados internos de suporte técnico**, permitindo o 
 
 ## 🗂️ Estrutura do Projeto
 
+🗂️ Estrutura do Projeto
+<pre> chamados-api/ ├── server.js # Arquivo principal que inicia o servidor ├── .env # Variáveis de ambiente (porta, banco de dados, etc.) ├── package.json # Dependências e scripts do projeto └── src/ ├── app.js # Configuração do Express e middlewares ├── config/ │ └── database.js # Configuração do Sequelize (SQLite, MySQL, etc.) ├── models/ │ └── chamadoModel.js # Modelo da tabela de chamados ├── controllers/ │ └── chamadoController.js # Lógica de criação, listagem, atualização e exclusão de chamados ├── routes/ │ └── chamadoRoutes.js # Definição das rotas da API └── database/ └── sync.js # Sincronização do banco de dados com os modelos </pre>
