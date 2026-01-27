@@ -1,0 +1,156 @@
+<!-- 
+  ============================================================
+  🎫 GERENCIADOR DE CHAMADOS - HTML SEMÂNTICO
+  ============================================================
+  
+  Este arquivo utiliza tags semânticas HTML5:
+  - <header>: Cabeçalho da aplicação
+  - <main>: Conteúdo principal
+  - <section>: Seções temáticas
+  - <article>: Cards individuais de chamados
+  - <form>: Formulário de criação
+  - <footer>: Rodapé da aplicação
+  
+  Benefícios:
+  ✓ Melhor acessibilidade
+  ✓ Melhor SEO
+  ✓ Código mais legível
+  ✓ Compatibilidade com leitores de tela
+  ============================================================
+-->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gerenciador de chamados de TI com interface moderna e responsiva">
+  <title>Gerenciador de Chamados - TI</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ============================================
+       HEADER - Cabeçalho da Aplicação
+       ============================================ -->
+  <header class="header">
+    <div class="container">
+      <h1>🎫 Gerenciador de Chamados</h1>
+      <p class="subtitle">Acompanhe e gerencie seus chamados de TI</p>
+    </div>
+  </header>
+
+  <!-- ============================================
+       MAIN - Conteúdo Principal
+       ============================================ -->
+  <main class="main">
+    <div class="container">
+      
+      <!-- SECTION 1: Formulário de Criação -->
+      <section class="form-section">
+        <h2>Novo Chamado</h2>
+        <form id="formChamado" class="form-chamado">
+          <!-- Campo: Título (obrigatório) -->
+          <div class="form-group">
+            <label for="titulo">Título *</label>
+            <input 
+              type="text" 
+              id="titulo" 
+              name="titulo" 
+              placeholder="Descrição breve do problema"
+              required
+            >
+          </div>
+
+          <!-- Campo: Descrição (opcional) -->
+          <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <textarea 
+              id="descricao" 
+              name="descricao" 
+              placeholder="Detalhe mais sobre o problema"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <!-- Campos: Prioridade + Responsável (em linha) -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prioridade">Prioridade</label>
+              <select id="prioridade" name="prioridade">
+                <option value="baixa">Baixa</option>
+                <option value="média">Média</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="responsavel">Responsável</label>
+              <input 
+                type="text" 
+                id="responsavel" 
+                name="responsavel" 
+                placeholder="Nome do responsável"
+              >
+            </div>
+          </div>
+
+          <!-- Botão de Submissão -->
+          <button type="submit" class="btn btn-primary">
+            ✨ Criar Chamado
+          </button>
+        </form>
+      </section>
+
+      <!-- SECTION 2: Filtros -->
+      <section class="filters-section">
+        <h2>Filtros</h2>
+        <div class="filters">
+          <button class="filter-btn active" data-filter="todos">
+            Todos (0)
+          </button>
+          <button class="filter-btn" data-filter="aberto">
+            Abertos (0)
+          </button>
+          <button class="filter-btn" data-filter="em andamento">
+            Em Andamento (0)
+          </button>
+          <button class="filter-btn" data-filter="resolvido">
+            Resolvidos (0)
+          </button>
+        </div>
+      </section>
+
+      <!-- SECTION 3: Lista de Chamados -->
+      <section class="chamados-section">
+        <h2>Chamados</h2>
+        <!-- 
+          Container dinâmico onde os chamados serão renderizados
+          via JavaScript usando Fetch API
+        -->
+        <div id="chamadosList" class="chamados-grid">
+          <div class="loading">
+            <p>Carregando chamados...</p>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+  </main>
+
+  <!-- ============================================
+       FOOTER - Rodapé
+       ============================================ -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Gerenciador de Chamados TI - Desenvolvido com HTML, CSS e JavaScript</p>
+    </div>
+  </footer>
+
+  <!-- ============================================
+       SCRIPT - JavaScript com Fetch API
+       ============================================ -->
+  <script src="script.js"></script>
+</body>
+</html>

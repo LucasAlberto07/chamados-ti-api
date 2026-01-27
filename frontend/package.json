@@ -1,0 +1,22 @@
+{
+  "name": "chamados-ti-frontend",
+  "version": "1.0.0",
+  "description": "Interface moderna para gerenciador de chamados de TI",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "chamados",
+    "ti",
+    "crud",
+    "html",
+    "css",
+    "javascript",
+    "fetch-api"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "type": "module"
+}
