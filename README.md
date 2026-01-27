@@ -82,6 +82,22 @@ npm start
 
 O servidor será iniciado em `http://localhost:3000` e o banco de dados será criado automaticamente.
 
+### 4️⃣ (Opcional) Popular o Banco com Dados de Teste
+Para facilitar o desenvolvimento, use os seeders com dados de demonstração:
+
+```bash
+# Executar todos os seeders
+npx sequelize-cli db:seed:all
+
+# Ou desfazer os seeders (remover dados de teste)
+npx sequelize-cli db:seed:undo:all
+```
+
+**Dados incluídos no seeder:**
+- 8 chamados de exemplo com diferentes prioridades e status
+- Responsáveis diversificados
+- Cenários reais de suporte TI
+
 ---
 
 ## 📊 Estrutura do Banco de Dados
@@ -262,6 +278,45 @@ chamados-ti-api/
     ├── script.js                # Lógica JavaScript do frontend
     └── package.json             # Dependências do frontend (se houver)
 ```
+
+---
+
+## 🌱 Seeders - Dados de Teste
+
+O projeto inclui seeders para popular o banco com dados de demonstração, facilitando testes e apresentações.
+
+### Dados Incluídos:
+- **8 chamados de exemplo** com cenários reais
+- **3 níveis de prioridade**: baixa, média, alta
+- **3 status diferentes**: aberto, em andamento, resolvido
+- **Responsáveis variados** simulando diferentes técnicos
+
+### Como Usar:
+
+#### Executar todos os seeders
+```bash
+npx sequelize-cli db:seed:all
+```
+
+#### Desfazer seeders (limpar dados de teste)
+```bash
+npx sequelize-cli db:seed:undo:all
+```
+
+#### Desfazer apenas um seeder específico
+```bash
+npx sequelize-cli db:seed:undo --seed 20260127174632-demo-chamados.js
+```
+
+### Exemplos de Chamados Inseridos:
+1. **Impressora não funciona** (Alta prioridade, Aberto)
+2. **Configurar novo computador** (Média prioridade, Em andamento)
+3. **Atualizar Microsoft Office** (Média prioridade, Em andamento)
+4. **Trocar HD do servidor** (Alta prioridade, Resolvido)
+5. **Corrigir conexão WiFi** (Baixa prioridade, Resolvido)
+6. **Instalar scanner de rede** (Baixa prioridade, Aberto)
+7. **Backup completo do servidor** (Alta prioridade, Em andamento)
+8. **Atualizar antivírus** (Média prioridade, Aberto)
 
 ---
 
