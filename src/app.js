@@ -4,7 +4,10 @@ const app = express();
 const chamadoRoutes = require('./routes/chamado.routes');
 const sequelize = require('./config/database');
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND,
+  credentials: true
+}));
 app.use(express.json());
 app.use('/api/chamados', chamadoRoutes);
 
