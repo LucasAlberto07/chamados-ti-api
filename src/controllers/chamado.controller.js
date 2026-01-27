@@ -1,12 +1,44 @@
 const Chamado = require('../models/chamado.model');
 
+// Valores válidos para ENUM
+const PRIORIDADES_VALIDAS = ['baixa', 'média', 'alta'];
+const STATUS_VALIDOS = ['aberto', 'em andamento', 'resolvido'];
+
+// Validar ENUM
+const validarEnum = (valor, valoresValidos, campo) => {
+  if (valor && !valoresValidos.includes(valor)) {
+    return {
+      valido: false,
+      erro: `${campo} inválido. Valores aceitos: ${valoresValidos.join(', ')}`
+    };
+  }
+  return { valido: true };
+};
+
 // Criar chamado
 exports.criarChamado = async (req, res) => {
   try {
     const { titulo, descricao, prioridade, status, responsavel } = req.body;
 
+    // Validar título
     if (!titulo) {
       return res.status(400).json({ error: 'O título é obrigatório.' });
+    }
+
+    // Validar prioridade se fornecida
+    if (prioridade) {
+      const validacao = validarEnum(prioridade, PRIORIDADES_VALIDAS, 'Prioridade');
+      if (!validacao.valido) {
+        return res.status(400).json({ error: validacao.erro });
+      }
+    }
+
+    // Validar status se fornecido
+    if (status) {
+      const validacao = validarEnum(status, STATUS_VALIDOS, 'Status');
+      if (!validacao.valido) {
+        return res.status(400).json({ error: validacao.erro });
+      }
     }
 
     const novoChamado = await Chamado.create({
@@ -19,6 +51,7 @@ exports.criarChamado = async (req, res) => {
 
     res.status(201).json(novoChamado);
   } catch (error) {
+    console.error('Erro ao criar chamado:', error);
     res.status(500).json({ error: 'Erro ao criar chamado.' });
   }
 };
@@ -29,6 +62,7 @@ exports.listarChamados = async (req, res) => {
     const chamados = await Chamado.findAll();
     res.json(chamados);
   } catch (error) {
+    console.error('Erro ao listar chamados:', error);
     res.status(500).json({ error: 'Erro ao listar chamados.' });
   }
 };
@@ -44,6 +78,7 @@ exports.buscarChamadoPorId = async (req, res) => {
 
     res.json(chamado);
   } catch (error) {
+    console.error('Erro ao buscar chamado:', error);
     res.status(500).json({ error: 'Erro ao buscar chamado.' });
   }
 };
@@ -58,9 +93,26 @@ exports.atualizarChamado = async (req, res) => {
       return res.status(404).json({ error: 'Chamado não encontrado.' });
     }
 
+    // Validar prioridade se fornecida
+    if (prioridade) {
+      const validacao = validarEnum(prioridade, PRIORIDADES_VALIDAS, 'Prioridade');
+      if (!validacao.valido) {
+        return res.status(400).json({ error: validacao.erro });
+      }
+    }
+
+    // Validar status se fornecido
+    if (status) {
+      const validacao = validarEnum(status, STATUS_VALIDOS, 'Status');
+      if (!validacao.valido) {
+        return res.status(400).json({ error: validacao.erro });
+      }
+    }
+
     await chamado.update({ titulo, descricao, prioridade, status, responsavel });
     res.json(chamado);
   } catch (error) {
+    console.error('Erro ao atualizar chamado:', error);
     res.status(500).json({ error: 'Erro ao atualizar chamado.' });
   }
 };
@@ -75,8 +127,14 @@ exports.atualizarStatus = async (req, res) => {
       return res.status(404).json({ error: 'Chamado não encontrado.' });
     }
 
-    if (!['aberto', 'em andamento', 'resolvido'].includes(status)) {
-      return res.status(400).json({ error: 'Status inválido.' });
+    // Validar status
+    if (!status) {
+      return res.status(400).json({ error: 'Status é obrigatório.' });
+    }
+
+    const validacao = validarEnum(status, STATUS_VALIDOS, 'Status');
+    if (!validacao.valido) {
+      return res.status(400).json({ error: validacao.erro });
     }
 
     chamado.status = status;
@@ -84,6 +142,7 @@ exports.atualizarStatus = async (req, res) => {
 
     res.json(chamado);
   } catch (error) {
+    console.error('Erro ao atualizar status:', error);
     res.status(500).json({ error: 'Erro ao atualizar status.' });
   }
 };
@@ -100,6 +159,7 @@ exports.deletarChamado = async (req, res) => {
     await chamado.destroy();
     res.json({ message: 'Chamado deletado com sucesso.' });
   } catch (error) {
+    console.error('Erro ao deletar chamado:', error);
     res.status(500).json({ error: 'Erro ao deletar chamado.' });
   }
 };

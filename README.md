@@ -13,8 +13,11 @@ O objetivo é gerenciar **chamados internos de suporte técnico**, permitindo o 
 - CRUD completo funcionando
 - CORS configurado
 - SQLite com Sequelize ORM
+- **Sincronização automática do banco de dados**
+- **Migrations com Sequelize CLI**
+- **Validação de campos ENUM**
 
-### Frontend ✅ (NOVO!)
+### Frontend ✅
 - HTML5 Semântico
 - CSS3 Responsivo (Grid + Flexbox)
 - JavaScript Vanilla (Fetch API)
@@ -30,9 +33,11 @@ O objetivo é gerenciar **chamados internos de suporte técnico**, permitindo o 
 ✅ **Buscar por ID** — Retorna um chamado específico.  
 ✅ **Atualizar chamado (PUT)** — Atualiza completamente os dados de um chamado.  
 ✅ **Atualizar status (PATCH)** — Atualiza apenas o status do chamado.  
-✅ **Deletar chamado** — Remove um chamado do banco de dados.
-✅ **Interface Web** — Frontend responsivo para gerenciar chamados visualmente.
-✅ **Filtros Dinâmicos** — Filtrar por status (Aberto, Andamento, Resolvido).
+✅ **Deletar chamado** — Remove um chamado do banco de dados.  
+✅ **Interface Web** — Frontend responsivo para gerenciar chamados visualmente.  
+✅ **Filtros Dinâmicos** — Filtrar por status (Aberto, Andamento, Resolvido).  
+✅ **Banco de dados automático** — Cria tabelas na primeira execução.  
+✅ **Validação ENUM** — Prioridade (baixa, média, alta) e Status (aberto, em andamento, resolvido).
 
 ---
 
@@ -41,12 +46,302 @@ O objetivo é gerenciar **chamados internos de suporte técnico**, permitindo o 
 - **Node.js** — Ambiente de execução JavaScript.
 - **Express** — Framework para criação de servidores e rotas HTTP.
 - **Sequelize** — ORM para manipulação de banco de dados relacional.
+- **Sequelize CLI** — Gerenciador de migrations e seeds.
 - **SQLite** — Banco de dados leve e prático para desenvolvimento local.
 - **Dotenv** — Gerenciamento de variáveis de ambiente.
 
 ---
 
+## 🔧 Configuração e Instalação
+
+### Pré-requisitos
+- Node.js v16+
+- npm v7+
+
+### 1️⃣ Instalar Dependências
+```bash
+npm install
+```
+
+### 2️⃣ Configurar Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do projeto:
+```bash
+cp .env.example .env
+```
+
+**Variáveis disponíveis:**
+- `PORT` — Porta do servidor (padrão: 3000)
+- `DATABASE_URL` — Caminho do banco SQLite (padrão: ./database.sqlite)
+- `NODE_ENV` — Ambiente (development/production)
+- `CORS_ORIGIN` — Origem permitida para CORS
+
+### 3️⃣ Iniciar o Servidor
+```bash
+npm start
+```
+
+O servidor será iniciado em `http://localhost:3000` e o banco de dados será criado automaticamente.
+
+---
+
+## 📊 Estrutura do Banco de Dados
+
+### Tabela: `Chamados`
+
+| Campo | Tipo | Obrigatório | Padrão |
+|-------|------|-------------|--------|
+| `id` | INTEGER | ✅ | Auto-increment |
+| `titulo` | STRING | ✅ | — |
+| `descricao` | TEXT | ❌ | NULL |
+| `prioridade` | ENUM | ❌ | 'baixa' |
+| `status` | ENUM | ❌ | 'aberto' |
+| `responsavel` | STRING | ❌ | NULL |
+| `createdAt` | TIMESTAMP | ✅ | CURRENT_TIMESTAMP |
+| `updatedAt` | TIMESTAMP | ✅ | CURRENT_TIMESTAMP |
+
+**Valores de ENUM:**
+- **Prioridade:** `baixa`, `média`, `alta`
+- **Status:** `aberto`, `em andamento`, `resolvido`
+
+---
+
+## 🌐 API REST - Endpoints
+
+### 1. Criar Chamado
+```
+POST /api/chamados
+Content-Type: application/json
+
+{
+  "titulo": "Impressora não funciona",
+  "descricao": "A impressora da sala 101 não está imprimindo",
+  "prioridade": "alta",
+  "responsavel": "João Silva"
+}
+```
+
+✅ Resposta (201):
+```json
+{
+  "id": 1,
+  "titulo": "Impressora não funciona",
+  "descricao": "A impressora da sala 101 não está imprimindo",
+  "prioridade": "alta",
+  "status": "aberto",
+  "responsavel": "João Silva",
+  "createdAt": "2026-01-27T17:45:00.000Z",
+  "updatedAt": "2026-01-27T17:45:00.000Z"
+}
+```
+
+❌ Erros:
+- **400:** Título obrigatório / Prioridade inválida / Status inválido
+- **500:** Erro ao criar chamado
+
+---
+
+### 2. Listar Todos os Chamados
+```
+GET /api/chamados
+```
+
+✅ Resposta (200):
+```json
+[
+  {
+    "id": 1,
+    "titulo": "Impressora não funciona",
+    "descricao": "A impressora da sala 101 não está imprimindo",
+    "prioridade": "alta",
+    "status": "aberto",
+    "responsavel": "João Silva",
+    "createdAt": "2026-01-27T17:45:00.000Z",
+    "updatedAt": "2026-01-27T17:45:00.000Z"
+  }
+]
+```
+
+---
+
+### 3. Buscar Chamado por ID
+```
+GET /api/chamados/:id
+```
+
+✅ Resposta (200): Retorna o chamado específico
+❌ Erros:
+- **404:** Chamado não encontrado
+- **500:** Erro ao buscar chamado
+
+---
+
+### 4. Atualizar Chamado (PUT)
+```
+PUT /api/chamados/:id
+Content-Type: application/json
+
+{
+  "titulo": "Impressora da sala 101",
+  "descricao": "Aguardando técnico",
+  "prioridade": "média",
+  "status": "em andamento",
+  "responsavel": "Maria Silva"
+}
+```
+
+✅ Resposta (200): Chamado atualizado
+❌ Erros:
+- **400:** Prioridade/Status inválido
+- **404:** Chamado não encontrado
+- **500:** Erro ao atualizar
+
+---
+
+### 5. Atualizar Status (PATCH)
+```
+PATCH /api/chamados/:id
+Content-Type: application/json
+
+{
+  "status": "resolvido"
+}
+```
+
+✅ Resposta (200): Status atualizado
+❌ Erros:
+- **400:** Status obrigatório / Status inválido
+- **404:** Chamado não encontrado
+- **500:** Erro ao atualizar
+
+---
+
+### 6. Deletar Chamado
+```
+DELETE /api/chamados/:id
+```
+
+✅ Resposta (200):
+```json
+{
+  "message": "Chamado deletado com sucesso."
+}
+```
+
+❌ Erros:
+- **404:** Chamado não encontrado
+- **500:** Erro ao deletar
+
+---
+
 ## 🗂️ Estrutura do Projeto
 
-🗂️ Estrutura do Projeto
-<pre> chamados-api/ ├── server.js # Arquivo principal que inicia o servidor ├── .env # Variáveis de ambiente (porta, banco de dados, etc.) ├── package.json # Dependências e scripts do projeto └── src/ ├── app.js # Configuração do Express e middlewares ├── config/ │ └── database.js # Configuração do Sequelize (SQLite, MySQL, etc.) ├── models/ │ └── chamadoModel.js # Modelo da tabela de chamados ├── controllers/ │ └── chamadoController.js # Lógica de criação, listagem, atualização e exclusão de chamados ├── routes/ │ └── chamadoRoutes.js # Definição das rotas da API └── database/ └── sync.js # Sincronização do banco de dados com os modelos </pre>
+```
+chamados-ti-api/
+├── server.js                    # Arquivo principal que inicia o servidor
+├── .env.example                 # Template de variáveis de ambiente
+├── package.json                 # Dependências e scripts do projeto
+├── config/
+│   └── config.json              # Configuração do Sequelize CLI
+├── migrations/
+│   └── 20260127174159-create-chamado-table.js  # Migration da tabela Chamados
+├── models/                      # Modelos do Sequelize (auto-gerado pelo CLI)
+├── seeders/                     # Seeds para popular dados (opcional)
+├── src/
+│   ├── app.js                   # Configuração do Express e sincronização do banco
+│   ├── config/
+│   │   └── database.js          # Configuração do Sequelize (SQLite, MySQL, etc.)
+│   ├── models/
+│   │   └── chamado.model.js     # Modelo da tabela de chamados
+│   ├── controllers/
+│   │   └── chamado.controller.js # Lógica da API (CRUD + validações)
+│   └── routes/
+│       └── chamado.routes.js    # Definição das rotas da API
+└── frontend/
+    ├── index.html               # Interface web
+    ├── styles.css               # Estilos CSS
+    ├── script.js                # Lógica JavaScript do frontend
+    └── package.json             # Dependências do frontend (se houver)
+```
+
+---
+
+## 🔄 Fluxo de Sincronização do Banco
+
+1. **Inicialização do Servidor**: Quando o servidor inicia (`npm start`), o arquivo `src/app.js` importa o Sequelize
+2. **Sincronização Automática**: O `sequelize.sync()` é executado automaticamente
+3. **Criação de Tabelas**: Se as tabelas não existem, elas são criadas baseado nos modelos
+4. **Confirmação**: Mensagem `✅ Banco de dados sincronizado com sucesso!` aparece no console
+
+---
+
+## ✔️ Validações Implementadas
+
+### Validações no Controller
+
+1. **Título obrigatório**
+   - Erro 400 se não informado
+   - Aplicado em: `POST` e `PUT`
+
+2. **Prioridade válida**
+   - Valores aceitos: `baixa`, `média`, `alta`
+   - Erro 400 se inválido
+   - Aplicado em: `POST` e `PUT` (se informado)
+
+3. **Status válido**
+   - Valores aceitos: `aberto`, `em andamento`, `resolvido`
+   - Erro 400 se inválido
+   - Aplicado em: `POST`, `PUT`, e `PATCH`
+
+4. **Status obrigatório no PATCH**
+   - Erro 400 se não informado
+   - Aplicado apenas em: `PATCH`
+
+---
+
+## 🚀 Como Usar
+
+### Teste com cURL
+
+```bash
+# Criar chamado
+curl -X POST http://localhost:3000/api/chamados \
+  -H "Content-Type: application/json" \
+  -d '{"titulo":"Problema WiFi","prioridade":"alta"}'
+
+# Listar chamados
+curl http://localhost:3000/api/chamados
+
+# Buscar por ID
+curl http://localhost:3000/api/chamados/1
+
+# Atualizar status
+curl -X PATCH http://localhost:3000/api/chamados/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status":"em andamento"}'
+
+# Deletar
+curl -X DELETE http://localhost:3000/api/chamados/1
+```
+
+### Teste via Frontend
+Abra `frontend/index.html` no navegador ou acesse através do servidor web.
+
+---
+
+## 📝 Notas Importantes
+
+- ✅ O banco é criado automaticamente na primeira execução
+- ✅ Não é necessário rodar migrations manualmente (`npm run migrate`)
+- ✅ Validações ENUM impedem dados inválidos
+- ✅ Timestamps (`createdAt`, `updatedAt`) são automáticos
+- ⚠️ Para alterar a estrutura do banco, crie uma nova migration: `npx sequelize-cli migration:create --name seu-nome`
+
+---
+
+## 📄 Licença
+
+MIT
+
+---
+
+**Desenvolvido com ❤️ para gerenciamento eficiente de chamados TI**
