@@ -1,5 +1,5 @@
 // CONFIGURAÇÃO DA API
-const API_URL = 'http://localhost:3000/api/chamados';
+const API_URL = 'https://tarefas-chamados-ti-api.onrender.com/api/chamados';
 let chamadosGlobal = [];
 let filtroAtual = 'todos';
 
