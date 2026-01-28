@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 const chamadoRoutes = require('./routes/chamado.routes');
 const sequelize = require('./config/database');
@@ -10,8 +11,16 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Rota raiz - informações da API
+// Servir arquivos estáticos do frontend
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Rota raiz - servir index.html (frontend)
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+// Rota API info (alternativa: /api)
+app.get('/api', (req, res) => {
   res.json({
     status: '✅ API em funcionamento',
     nome: 'API de Chamados TI',
