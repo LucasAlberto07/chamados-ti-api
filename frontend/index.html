@@ -120,6 +120,18 @@
     </div>
   </div>
 
+  <script>
+    // Configurar URL da API dinamicamente
+    if (typeof window !== 'undefined') {
+      const protocol = window.location.protocol;
+      const host = window.location.host;
+      
+      // Se estiver em produção (não localhost), definir a URL correta
+      if (!host.includes('localhost')) {
+        window.API_BASE_URL = 'https://tarefas-chamados-ti-api.onrender.com/api/chamados';
+      }
+    }
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
